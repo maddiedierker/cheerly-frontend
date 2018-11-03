@@ -27,7 +27,7 @@ const query = gql`{
   }
 }`
 
-export default class HomeScreen extends React.Component {
+export default class CategoriesScreen extends React.Component {
   render() {
     return (
       <Query query={query}>
