@@ -1,23 +1,23 @@
 import React from 'react';
-import { View, Text } from 'react-native';
 import { createStackNavigator } from 'react-navigation';
-
-class HomeScreen extends React.Component {
-  render() {
-    return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <Text>Home Screen</Text>
-      </View>
-    );
-  }
-}
+import NavigationScreen from './screens/NavigationScreen';
+import HomeScreen from './screens/HomeScreen';
+import ScheduleScreen from './screens/ScheduleScreen';
+import FavesScreen from './screens/FavesScreen';
+import MessagesScreen from './screens/MessagesScreen';
+import SettingsScreen from './screens/SettingsScreen';
 
 const RootStack = createStackNavigator(
   {
+    Navigation: NavigationScreen,
     Home: HomeScreen,
+    Schedule: ScheduleScreen,
+    Faves: FavesScreen,
+    Messages: MessagesScreen,
+    Settings: SettingsScreen,
   },
   {
-    initialRouteName: 'Home',
+    initialRouteName: 'Navigation',
   }
 );
 
