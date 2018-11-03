@@ -13,27 +13,9 @@ import FavesScreen from './screens/FavesScreen';
 import MessagesScreen from './screens/MessagesScreen';
 import SettingsScreen from './screens/SettingsScreen';
 
+const link = new HttpLink({ uri: 'http://localhost:3000/graphql' })
 const cache = new InMemoryCache()
-const stateLink = withClientState({
-  cache,
-  defaults: {
-    testing: {
-      __typename: 'testing',
-      name: '',
-      age: 0
-    }
-  }
-})
-const client = new ApolloClient({
-  cache,
-  link: ApolloLink.from([
-    stateLink,
-    new HttpLink({ uri: 'http://localhost:3000/graphql' })
-  ])
-})
-
-// make client to rewrite the defaults every time the store resets
-client.onResetStore(stateLink.writeDefaults)
+const client = new ApolloClient({ link, cache })
 
 const RootStack = createStackNavigator(
   {
