@@ -1,6 +1,15 @@
-import React from 'react';
-import { StyleSheet, View, TextInput, TouchableOpacity, Text } from 'react-native';
-import colors from '../assets/colors';
+import React from 'react'
+import {
+  AsyncStorage,
+  StyleSheet, 
+  View, 
+  TextInput, 
+  TouchableOpacity, 
+  Text 
+} from 'react-native'
+import { Mutation } from 'react-apollo'
+import gql from 'graphql-tag'
+import colors from '../assets/colors'
 
 const styles = StyleSheet.create({
   container: {
@@ -54,44 +63,85 @@ const styles = StyleSheet.create({
   },
 });
 
+const SIGN_IN = gql`
+  mutation SignIn($email: String!, $password: String!) {
+    signIn(email: $email, password: $password) {
+      token
+      errors
+    }
+  }
+`
+
 export default class SignInScreen extends React.Component {
   state = {
     email: '',
     password: '',
+    errors: [],
   }
 
-  submit = (event) => {
+  onChangeEmail = (value) => {
+    this.setState({
+      email: value,
+      errors: [],
+    })
+  }
 
+  onChangePassword = (value) => {
+   this.setState({
+      password: value,
+      errors: [],
+    })
+  }
+
+  submit = async (signInMutation) => {
+    const variables = { 
+      email: this.state.email,
+      password: this.state.password,
+    }
+    const response = await signInMutation({ variables })
+    const { token, errors } = response.data.signIn
+
+    if (errors.length > 0 || token.length === 0) {
+      this.setState({ errors })
+    } else {
+      await AsyncStorage.setItem('token', token)
+      this.props.navigation.navigate('Navigation')
+    }
   }
 
   render() {
     return (
-      <View style={styles.container}>
-        <View style={styles.headerContainer}>
-          <View style={styles.horizontalRule}></View>
-          <Text style={styles.header}>Log in with email</Text>
-          <View style={styles.horizontalRule}></View>
-        </View>
-        <TextInput
-          style={styles.input}
-          onChangeText={(email) => this.setState({email})}
-          value={this.state.email}
-          placeholder='Email'
-        />
-        <TextInput
-          style={styles.input}
-          onChangeText={(password) => this.setState({password})}
-          value={this.state.password}
-          placeholder='Password (8+ characters)'
-          secureTextEntry
-        />
-        <TouchableOpacity
-          style={styles.button}
-          onPress={this.submit}
-        >
-          <Text style={styles.text}>Let's do this</Text>
-        </TouchableOpacity>
-      </View>
+      <Mutation mutation={SIGN_IN}>
+        {signIn =>
+          <View style={styles.container}>
+            <View style={styles.headerContainer}>
+              <View style={styles.horizontalRule}></View>
+              <Text style={styles.header}>Log in with email</Text>
+              <View style={styles.horizontalRule}></View>
+            </View>
+            <TextInput
+              style={styles.input}
+              onChangeText={this.onChangeEmail}
+              value={this.state.email}
+              placeholder='Email'
+            />
+            <TextInput
+              style={styles.input}
+              onChangeText={this.onChangePassword}
+              value={this.state.password}
+              placeholder='Password (8+ characters)'
+              secureTextEntry
+            />
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => this.submit(signIn)}
+            >
+              <Text style={styles.text}>Let's do this</Text>
+            </TouchableOpacity>
+            {this.state.errors.map((error, index) => <Text key={index}>{error}</Text>)}
+          </View>
+        }
+      </Mutation>
     );
   }
 }
