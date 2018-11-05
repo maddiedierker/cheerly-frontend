@@ -1,7 +1,9 @@
 import React from 'react';
+import { AsyncStorage } from 'react-native';
 import { ApolloClient} from 'apollo-client';
 import { InMemoryCache } from 'apollo-cache-inmemory';
-import { HttpLink } from 'apollo-link-http';
+import { createHttpLink } from 'apollo-link-http';
+import { setContext } from 'apollo-link-context';
 import { ApolloLink } from 'apollo-link';
 import { ApolloProvider } from 'react-apollo';
 import { withClientState } from 'apollo-link-state';
@@ -12,10 +14,18 @@ import ScheduleScreen from './screens/ScheduleScreen';
 import FavesScreen from './screens/FavesScreen';
 import MessagesScreen from './screens/MessagesScreen';
 import SettingsScreen from './screens/SettingsScreen';
+import SignInScreen from './screens/SignInScreen';
 
-const link = new HttpLink({ uri: 'http://localhost:3000/graphql' })
+const httpLink = new createHttpLink({ uri: 'http://localhost:3000/graphql' })
+const authLink = setContext((_, { headers }) => {
+  // TODO: implement authorization header with token from API
+});
+
 const cache = new InMemoryCache()
-const client = new ApolloClient({ link, cache })
+const client = new ApolloClient({ 
+  link: authLink.concat(httpLink), 
+  cache 
+})
 
 const RootStack = createStackNavigator(
   {
@@ -25,6 +35,7 @@ const RootStack = createStackNavigator(
     Faves: FavesScreen,
     Messages: MessagesScreen,
     Settings: SettingsScreen,
+    SignIn: SignInScreen,
   },
   {
     initialRouteName: 'Navigation',
