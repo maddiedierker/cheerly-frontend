@@ -1,21 +1,21 @@
-import React from 'react';
-import { AsyncStorage } from 'react-native';
-import { ApolloClient} from 'apollo-client';
-import { InMemoryCache } from 'apollo-cache-inmemory';
-import { createHttpLink } from 'apollo-link-http';
-import { setContext } from 'apollo-link-context';
-import { ApolloProvider } from 'react-apollo';
-import { createStackNavigator } from 'react-navigation';
-import NavigationScreen from './screens/NavigationScreen';
-import HomeScreen from './screens/HomeScreen';
-import ScheduleScreen from './screens/ScheduleScreen';
-import FavesScreen from './screens/FavesScreen';
-import MessagesScreen from './screens/MessagesScreen';
-import SettingsScreen from './screens/SettingsScreen';
-import SignInScreen from './screens/SignInScreen';
+import React from 'react'
+import { AsyncStorage } from 'react-native'
+import { ApolloClient} from 'apollo-client'
+import { InMemoryCache } from 'apollo-cache-inmemory'
+import { createHttpLink } from 'apollo-link-http'
+import { setContext } from 'apollo-link-context'
+import { ApolloProvider } from 'react-apollo'
+import { createStackNavigator } from 'react-navigation'
+import NavigationScreen from './screens/NavigationScreen'
+import HomeScreen from './screens/HomeScreen'
+import ScheduleScreen from './screens/ScheduleScreen'
+import FavesScreen from './screens/FavesScreen'
+import MessagesScreen from './screens/MessagesScreen'
+import SettingsScreen from './screens/SettingsScreen'
+import SignInScreen from './screens/SignInScreen'
 
 const httpLink = new createHttpLink({ uri: 'http://localhost:3000/graphql' })
-let cachedToken;
+let cachedToken
 const authLink = setContext((_, { headers }) => {
   if (cachedToken) {
     return {
@@ -33,7 +33,7 @@ const authLink = setContext((_, { headers }) => {
       }
     }
   })
-});
+})
 
 const cache = new InMemoryCache()
 const client = new ApolloClient({ 
@@ -54,7 +54,7 @@ const RootStack = createStackNavigator(
   {
     initialRouteName: 'Navigation',
   }
-);
+)
 
 export default class App extends React.Component {
   render() {
@@ -62,6 +62,6 @@ export default class App extends React.Component {
       <ApolloProvider client={client}>
         <RootStack />
       </ApolloProvider>
-    );
+    )
   }
 }
