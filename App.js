@@ -17,8 +17,24 @@ import SettingsScreen from './screens/SettingsScreen';
 import SignInScreen from './screens/SignInScreen';
 
 const httpLink = new createHttpLink({ uri: 'http://localhost:3000/graphql' })
+let cachedToken;
 const authLink = setContext((_, { headers }) => {
-  // TODO: implement authorization header with token from API
+  if (cachedToken) {
+    return {
+      headers: {
+        authorization: `Bearer ${token}`
+      }
+    }
+  }
+
+  return AsyncStorage.getItem('token').then(token => {
+    cachedToken = token
+    return {
+      headers: {
+        authorization: `Bearer ${token}`
+      }
+    }
+  })
 });
 
 const cache = new InMemoryCache()
