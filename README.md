@@ -1,6 +1,7 @@
 ### Requirements
 - yarn
 - node v8.3
+- expo-cli
 
 ### Installation
 
@@ -11,7 +12,7 @@ yarn install
 expo start
 ```
 
-Once the Expo Metro Bundler has opened in a browser at localhost:19002, you can use Expo to run an Android or iOS simulator.
+Once the Expo Metro Bundler has opened in a browser at localhost:19002, you can use Expo to run an Android or iOS simulator. You may also photograph the QR code on the localhost:19002 page to run the app on your own Android/iOS device. 
 
 ### A Contrived Example
 ```
