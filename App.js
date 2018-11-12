@@ -24,6 +24,7 @@ const RootStack = createStackNavigator(
   },
   {
     initialRouteName: 'Navigation',
+    headerMode: 'none',
   }
 )
 

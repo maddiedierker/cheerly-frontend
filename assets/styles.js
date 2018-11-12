@@ -3,10 +3,10 @@ import colors from './colors'
 
 export const formStyles = StyleSheet.create({
   container: {
-    height: '100%',
     alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: 'white',
-    paddingTop: 90,
+    flex: 1,
   },
   headerContainer: {
     flexDirection: 'row',
