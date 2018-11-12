@@ -63,20 +63,35 @@ const styles = StyleSheet.create({
   },
 });
 
-const SIGN_IN = gql`
-  mutation SignIn($email: String!, $password: String!) {
-    signIn(email: $email, password: $password) {
+const CREATE_USER = gql`
+  mutation CreateUser($firstName: String!, $email: String!, $password: String!, $passwordConfirmation: String!) {
+    createUser(firstName: $firstName, email: $email, password: $password, passwordConfirmation: $passwordConfirmation) {
       token
       errors
     }
   }
 `
 
-export default class SignInScreen extends React.Component {
+export default class SignUpScreen extends React.Component {
   state = {
+    firstName: '',
     email: '',
     password: '',
+    passwordConfirmation: '',
     errors: [],
+  }
+
+  onChangeInput = (property, value) => {
+    const newState = {...this.state}
+    newState[property] = value
+    this.setState({ state: newState })
+  }
+
+  onChangeFirstName = (value) => {
+    this.setState({
+      firstName: value,
+      errors: [],
+    })
   }
 
   onChangeEmail = (value) => {
@@ -87,19 +102,28 @@ export default class SignInScreen extends React.Component {
   }
 
   onChangePassword = (value) => {
-   this.setState({
+    this.setState({
       password: value,
       errors: [],
     })
   }
 
-  submit = async (signInMutation) => {
-    const variables = { 
+  onChangePasswordConfirmation = (value) => {
+    this.setState({
+      passwordConfirmation: value,
+      errors: [],
+    })
+  }
+
+  submit = async (signUpMutation) => {
+    const variables = {
+      firstName: this.state.firstName,
       email: this.state.email,
       password: this.state.password,
+      passwordConfirmation: this.state.passwordConfirmation,
     }
-    const response = await signInMutation({ variables })
-    const { token, errors } = response.data.signIn
+    const response = await signUpMutation({ variables })
+    const { token, errors } = response.data.createUser
 
     if (errors.length > 0 || token.length === 0) {
       this.setState({ errors })
@@ -111,14 +135,20 @@ export default class SignInScreen extends React.Component {
 
   render() {
     return (
-      <Mutation mutation={SIGN_IN}>
-        {signIn =>
+      <Mutation mutation={CREATE_USER}>
+        {createUser =>
           <View style={styles.container}>
             <View style={styles.headerContainer}>
               <View style={styles.horizontalRule}></View>
-              <Text style={styles.header}>Log in with email</Text>
+              <Text style={styles.header}>Or sign up with email</Text>
               <View style={styles.horizontalRule}></View>
             </View>
+            <TextInput
+              style={styles.input}
+              onChangeText={this.onChangeFirstName}
+              value={this.state.firstName}
+              placeholder='First name'
+            />
             <TextInput
               style={styles.input}
               onChangeText={this.onChangeEmail}
@@ -132,9 +162,16 @@ export default class SignInScreen extends React.Component {
               placeholder='Password (8+ characters)'
               secureTextEntry
             />
+            <TextInput
+              style={styles.input}
+              onChangeText={this.onChangePasswordConfirmation}
+              value={this.state.passwordConfirmation}
+              placeholder='Password confirmation'
+              secureTextEntry
+            />
             <TouchableOpacity
               style={styles.button}
-              onPress={() => this.submit(signIn)}
+              onPress={() => this.submit(createUser)}
             >
               <Text style={styles.text}>Let's do this</Text>
             </TouchableOpacity>

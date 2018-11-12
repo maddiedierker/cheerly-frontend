@@ -9,6 +9,7 @@ import FavesScreen from './screens/FavesScreen'
 import MessagesScreen from './screens/MessagesScreen'
 import SettingsScreen from './screens/SettingsScreen'
 import SignInScreen from './screens/SignInScreen'
+import SignUpScreen from './screens/SignUpScreen'
 
 const RootStack = createStackNavigator(
   {
@@ -19,6 +20,7 @@ const RootStack = createStackNavigator(
     Messages: MessagesScreen,
     Settings: SettingsScreen,
     SignIn: SignInScreen,
+    SignUp: SignUpScreen,
   },
   {
     initialRouteName: 'Navigation',
