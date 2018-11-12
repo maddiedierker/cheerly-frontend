@@ -6,6 +6,7 @@ import {
   Text 
 } from 'react-native'
 import { Mutation } from 'react-apollo'
+import { ApolloConsumer } from 'react-apollo'
 import gql from 'graphql-tag'
 import { setAuthToken } from '../apolloClient'
 import { formStyles } from '../assets/styles'
@@ -14,6 +15,10 @@ const CREATE_USER = gql`
   mutation CreateUser($firstName: String!, $email: String!, $password: String!, $passwordConfirmation: String!) {
     createUser(firstName: $firstName, email: $email, password: $password, passwordConfirmation: $passwordConfirmation) {
       token
+      user {
+        firstName
+        email
+      }
       errors
     }
   }
@@ -56,7 +61,7 @@ export default class SignUpScreen extends React.Component {
     })
   }
 
-  submit = async (signUpMutation) => {
+  submit = async (signUpMutation, client) => {
     const variables = {
       firstName: this.state.firstName,
       email: this.state.email,
@@ -69,6 +74,7 @@ export default class SignUpScreen extends React.Component {
     if (errors.length > 0 || token.length === 0) {
       this.setState({ errors })
     } else {
+      client.writeData({ data: { user } })
       await setAuthToken(token)
       this.props.navigation.navigate('Navigation')
     }
@@ -76,50 +82,54 @@ export default class SignUpScreen extends React.Component {
 
   render() {
     return (
-      <Mutation mutation={CREATE_USER}>
-        {createUser =>
-          <View style={formStyles.container}>
-            <View style={formStyles.headerContainer}>
-              <View style={formStyles.horizontalRule}></View>
-              <Text style={formStyles.header}>Or sign up with email</Text>
-              <View style={formStyles.horizontalRule}></View>
-            </View>
-            <TextInput
-              style={formStyles.input}
-              onChangeText={this.onChangeFirstName}
-              value={this.state.firstName}
-              placeholder='First name'
-            />
-            <TextInput
-              style={formStyles.input}
-              onChangeText={this.onChangeEmail}
-              value={this.state.email}
-              placeholder='Email address'
-            />
-            <TextInput
-              style={formStyles.input}
-              onChangeText={this.onChangePassword}
-              value={this.state.password}
-              placeholder='Password (8+ characters)'
-              secureTextEntry
-            />
-            <TextInput
-              style={formStyles.input}
-              onChangeText={this.onChangePasswordConfirmation}
-              value={this.state.passwordConfirmation}
-              placeholder='Password confirmation'
-              secureTextEntry
-            />
-            <TouchableOpacity
-              style={formStyles.button}
-              onPress={() => this.submit(createUser)}
-            >
-              <Text style={formStyles.text}>Let's do this</Text>
-            </TouchableOpacity>
-            {this.state.errors.map((error, index) => <Text key={index}>{error}</Text>)}
-          </View>
+      <ApolloConsumer>
+        {client =>
+          <Mutation mutation={CREATE_USER}>
+            {createUser =>
+              <View style={formStyles.container}>
+                <View style={formStyles.headerContainer}>
+                  <View style={formStyles.horizontalRule}></View>
+                  <Text style={formStyles.header}>Or sign up with email</Text>
+                  <View style={formStyles.horizontalRule}></View>
+                </View>
+                <TextInput
+                  style={formStyles.input}
+                  onChangeText={this.onChangeFirstName}
+                  value={this.state.firstName}
+                  placeholder='First name'
+                />
+                <TextInput
+                  style={formStyles.input}
+                  onChangeText={this.onChangeEmail}
+                  value={this.state.email}
+                  placeholder='Email address'
+                />
+                <TextInput
+                  style={formStyles.input}
+                  onChangeText={this.onChangePassword}
+                  value={this.state.password}
+                  placeholder='Password (8+ characters)'
+                  secureTextEntry
+                />
+                <TextInput
+                  style={formStyles.input}
+                  onChangeText={this.onChangePasswordConfirmation}
+                  value={this.state.passwordConfirmation}
+                  placeholder='Password confirmation'
+                  secureTextEntry
+                />
+                <TouchableOpacity
+                  style={formStyles.button}
+                  onPress={() => this.submit(createUser, client)}
+                >
+                  <Text style={formStyles.text}>Let's do this</Text>
+                </TouchableOpacity>
+                {this.state.errors.map((error, index) => <Text key={index}>{error}</Text>)}
+              </View>
+            }
+          </Mutation>
         }
-      </Mutation>
+      </ApolloConsumer>
     );
   }
 }
