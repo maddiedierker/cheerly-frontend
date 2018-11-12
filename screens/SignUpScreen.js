@@ -69,7 +69,7 @@ export default class SignUpScreen extends React.Component {
     if (errors.length > 0 || token.length === 0) {
       this.setState({ errors })
     } else {
-      await setAuthToken
+      await setAuthToken(token)
       this.props.navigation.navigate('Navigation')
     }
   }
