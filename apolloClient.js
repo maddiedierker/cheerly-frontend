@@ -9,7 +9,11 @@ const httpLink = new createHttpLink({ uri: 'http://localhost:3000/graphql' })
 const cache = new InMemoryCache()
 let cachedToken
 
-const getToken = () => {
+export const setAuthToken = async (token) => {
+  AsyncStorage.setItem('token', token)
+}
+
+const getAuthToken = () => {
   if (cachedToken) {
     return cachedToken
   } else {
@@ -22,7 +26,7 @@ const getToken = () => {
 
 const authLink = setContext((_, { headers }) => {
   headers: {
-    authorization: `Bearer ${getToken()}`
+    authorization: `Bearer ${getAuthToken()}`
   }
 })
 
