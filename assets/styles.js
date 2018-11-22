@@ -1,6 +1,21 @@
 import { StyleSheet } from 'react-native'
 import colors from './colors'
 
+export const commonStyles = StyleSheet.create({
+  container: {
+    marginHorizontal: 30,
+  },
+  header: {
+    fontSize: 24,
+    color: colors.brownishGrey,
+  },
+  subtitle: {
+    fontSize: 16,
+    paddingTop: 10,
+    color: colors.brownishGrey,
+  }
+})
+
 export const formStyles = StyleSheet.create({
   container: {
     alignItems: 'center',
